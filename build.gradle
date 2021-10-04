@@ -3,14 +3,14 @@ apply plugin: 'eclipse'
 
 jar {
     archiveBaseName = 'RaytraceUtil'
-    archiveVersion = '1.0.0'
+    archiveVersion = '1.0.1'
     manifest.attributes([
         'Built-By': 'Meldexun',
         'Specification-Title': 'RaytraceUtil',
-        'Specification-Version': '1.0.0',
+        'Specification-Version': '1.0.1',
         'Specification-Vendor': 'Meldexun',
         'Implementation-Title': 'RaytraceUtil',
-        'Implementation-Version': '1.0.0',
+        'Implementation-Version': '1.0.1',
         'Implementation-Vendor': 'Meldexun',
         'Implementation-Timestamp': new Date().format("yyyy-MM-dd HH:mm:ss")
     ])
