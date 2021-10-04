@@ -48,9 +48,9 @@ public class RayTracingCache {
 	}
 
 	private RayTracingCacheChunk getChunk(int x, int y, int z) {
-		x = x >> 4 + this.radiusChunks;
-		y = y >> 4 + this.radiusChunks;
-		z = z >> 4 + this.radiusChunks;
+		x = (x >> 4) + this.radiusChunks;
+		y = (y >> 4) + this.radiusChunks;
+		z = (z >> 4) + this.radiusChunks;
 		int index = (z * this.sizeChunks + y) * this.sizeChunks + x;
 		if (index < 0 || index >= this.chunks.length) {
 			return null;
