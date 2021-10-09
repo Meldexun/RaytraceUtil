@@ -92,8 +92,8 @@ public class RayTracingEngine {
 						d = percentZ - dz;
 					}
 					double hitX = startX + dirX * d;
-					double hitY = startX + dirY * d;
-					double hitZ = startX + dirZ * d;
+					double hitY = startY + dirY * d;
+					double hitZ = startZ + dirZ * d;
 
 					if (!hasHitAnything) {
 						hasHitAnything = true;
@@ -113,8 +113,8 @@ public class RayTracingEngine {
 						d1 = percentZ;
 					}
 					double nextHitX = startX + dirX * d1;
-					double nextHitY = startX + dirY * d1;
-					double nextHitZ = startX + dirZ * d1;
+					double nextHitY = startY + dirY * d1;
+					double nextHitZ = startZ + dirZ * d1;
 
 					threshold -= Math.sqrt(squareDist(hitX, hitY, hitZ, nextHitX, nextHitY, nextHitZ));
 					if (threshold < 0.0D) {
