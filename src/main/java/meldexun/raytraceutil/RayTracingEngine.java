@@ -91,6 +91,7 @@ public class RayTracingEngine {
 					} else {
 						d = percentZ - dz;
 					}
+					d = Math.min(d, 1.0D);
 					double hitX = startX + dirX * d;
 					double hitY = startY + dirY * d;
 					double hitZ = startZ + dirZ * d;
@@ -112,6 +113,7 @@ public class RayTracingEngine {
 					} else {
 						d1 = percentZ;
 					}
+					d1 = Math.min(d1, 1.0D);
 					double nextHitX = startX + dirX * d1;
 					double nextHitY = startY + dirY * d1;
 					double nextHitZ = startZ + dirZ * d1;
