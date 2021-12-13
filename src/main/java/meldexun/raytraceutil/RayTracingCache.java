@@ -49,13 +49,18 @@ public class RayTracingCache {
 
 	private RayTracingCacheChunk getChunk(int x, int y, int z) {
 		x = (x >> 4) + this.radiusChunks;
-		y = (y >> 4) + this.radiusChunks;
-		z = (z >> 4) + this.radiusChunks;
-		int index = (z * this.sizeChunks + y) * this.sizeChunks + x;
-		if (index < 0 || index >= this.chunks.length) {
+		if (x < 0 || x >= this.sizeChunks) {
 			return null;
 		}
-		return this.chunks[index];
+		y = (y >> 4) + this.radiusChunks;
+		if (y < 0 || y >= this.sizeChunks) {
+			return null;
+		}
+		z = (z >> 4) + this.radiusChunks;
+		if (z < 0 || z >= this.sizeChunks) {
+			return null;
+		}
+		return this.chunks[(z * this.sizeChunks + y) * this.sizeChunks + x];
 	}
 
 	public void clearCache() {
@@ -67,7 +72,7 @@ public class RayTracingCache {
 
 	private class RayTracingCacheChunk {
 
-		private int[] cache = new int[16 * 16];
+		private int[] cache = new int[256];
 		private boolean dirty = false;
 
 		/**
