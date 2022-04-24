@@ -2,7 +2,6 @@ package meldexun.raytraceutil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.IntSupplier;
 
@@ -48,10 +47,10 @@ public class RayTracingCache {
 	}
 
 	public void clearCache() {
-		for (Iterator<RayTracingCacheChunk> iter = this.dirtyChunks.iterator(); iter.hasNext();) {
-			iter.next().clearChunk();
-			iter.remove();
+		for (RayTracingCacheChunk chunk : this.dirtyChunks) {
+			chunk.clearChunk();
 		}
+		this.dirtyChunks.clear();
 	}
 
 	private class RayTracingCacheChunk {
