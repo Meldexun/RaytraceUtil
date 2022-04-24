@@ -1,6 +1,12 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
+version = '1.0.5'
+group = 'meldexun.raytraceutil'
+archivesBaseName = 'RaytraceUtil'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
 repositories {
     mavenCentral()
 }
@@ -10,15 +16,13 @@ dependencies {
 }
 
 jar {
-    archiveBaseName = 'RaytraceUtil'
-    archiveVersion = '1.0.5'
     manifest.attributes([
         'Built-By': 'Meldexun',
-        'Specification-Title': 'RaytraceUtil',
-        'Specification-Version': '1.0.5',
+        'Specification-Title': archivesBaseName,
+        'Specification-Version': version,
         'Specification-Vendor': 'Meldexun',
-        'Implementation-Title': 'RaytraceUtil',
-        'Implementation-Version': '1.0.5',
+        'Implementation-Title': archivesBaseName,
+        'Implementation-Version': version,
         'Implementation-Vendor': 'Meldexun',
         'Implementation-Timestamp': new Date().format("yyyy-MM-dd HH:mm:ss")
     ])
