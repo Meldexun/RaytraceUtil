@@ -1,40 +1,51 @@
 package meldexun.raytraceutil;
 
-public class RayTracingEngine {
+public class RaytracingEngine {
 
-	@FunctionalInterface
-	public interface PositionPredicate {
+	private double camX;
+	private double camY;
+	private double camZ;
+	private int camBlockX;
+	private int camBlockY;
+	private int camBlockZ;
+	private final IRaytracingCache opacityCache;
+	private final IRaytracingCache resultCache;
+	private final Int2BoolTriFunction isOpaqueFunction;
 
-		boolean isOpaque(int x, int y, int z);
-
+	public RaytracingEngine(int cacheSize, Int2BoolTriFunction isOpaqueFunction) {
+		this.opacityCache = new RaytracingArrayCache(cacheSize);
+		this.resultCache = new RaytracingMapCache();
+		this.isOpaqueFunction = isOpaqueFunction;
 	}
 
-	private final RayTracingCache opacityCache;
-	private int centerX;
-	private int centerY;
-	private int centerZ;
-	private final PositionPredicate positionPredicate;
-
-	public RayTracingEngine(int cacheSize, PositionPredicate positionPredicate) {
-		this.opacityCache = new RayTracingCache(cacheSize);
-		this.positionPredicate = positionPredicate;
-	}
-
-	public void setupCache(int x, int y, int z) {
-		centerX = x;
-		centerY = y;
-		centerZ = z;
+	public void setup(double x, double y, double z) {
+		camBlockX = floor(x);
+		camBlockY = floor(y);
+		camBlockZ = floor(z);
 	}
 
 	public void clearCache() {
 		opacityCache.clearCache();
+		resultCache.clearCache();
 	}
 
-	private boolean isOpaque(int x, int y, int z) {
-		return opacityCache.getOrSetCachedValue(x - centerX, y - centerY, z - centerZ, () -> positionPredicate.isOpaque(x, y, z) ? 1 : 2) == 1;
+	public boolean raytraceCachedThreshold(int endX, int endY, int endZ, double threshold) {
+		return resultCache.getOrSetCachedValue(endX - camBlockX, endY - camBlockY, endZ - camBlockZ, () -> raytraceUncachedThreshold(endX, endY, endZ, threshold));
 	}
 
-	public boolean raytraceThreshold(double startX, double startY, double startZ, double endX, double endY, double endZ, double threshold) {
+	public boolean raytraceCached(int endX, int endY, int endZ) {
+		return resultCache.getOrSetCachedValue(endX - camBlockX, endY - camBlockY, endZ - camBlockZ, () -> raytraceUncached(endX, endY, endZ));
+	}
+
+	public boolean raytraceUncachedThreshold(double endX, double endY, double endZ, double threshold) {
+		return raytraceThreshold(camX, camY, camZ, endX, endY, endZ, threshold);
+	}
+
+	public boolean raytraceUncached(double endX, double endY, double endZ) {
+		return raytrace(camX, camY, camZ, endX, endY, endZ);
+	}
+
+	private boolean raytraceThreshold(double startX, double startY, double startZ, double endX, double endY, double endZ, double threshold) {
 		if (threshold <= 0.0D) {
 			return raytrace(startX, startY, startZ, endX, endY, endZ);
 		}
@@ -115,7 +126,7 @@ public class RayTracingEngine {
 		return true;
 	}
 
-	public boolean raytrace(double startX, double startY, double startZ, double endX, double endY, double endZ) {
+	private boolean raytrace(double startX, double startY, double startZ, double endX, double endY, double endZ) {
 		int x = floor(startX);
 		int y = floor(startY);
 		int z = floor(startZ);
@@ -160,6 +171,10 @@ public class RayTracingEngine {
 		}
 
 		return true;
+	}
+
+	private boolean isOpaque(int x, int y, int z) {
+		return opacityCache.getOrSetCachedValue(x - camBlockX, y - camBlockY, z - camBlockZ, () -> isOpaqueFunction.applyAsBool(x, y, z));
 	}
 
 	private static int signum(double x) {

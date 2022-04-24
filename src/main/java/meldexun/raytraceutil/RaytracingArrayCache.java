@@ -3,16 +3,16 @@ package meldexun.raytraceutil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.IntSupplier;
+import java.util.function.BooleanSupplier;
 
-public class RayTracingCache {
+class RaytracingArrayCache implements IRaytracingCache {
 
 	private final int radiusChunks;
 	private final int sizeChunks;
 	private final RayTracingCacheChunk[] chunks;
 	private final List<RayTracingCacheChunk> dirtyChunks = new ArrayList<>();
 
-	public RayTracingCache(int radiusChunks) {
+	public RaytracingArrayCache(int radiusChunks) {
 		this.radiusChunks = radiusChunks;
 		this.sizeChunks = this.radiusChunks * 2 + 1;
 		this.chunks = new RayTracingCacheChunk[this.sizeChunks * this.sizeChunks * this.sizeChunks];
@@ -22,10 +22,11 @@ public class RayTracingCache {
 		}
 	}
 
-	public int getOrSetCachedValue(int x, int y, int z, IntSupplier function) {
+	@Override
+	public boolean getOrSetCachedValue(int x, int y, int z, BooleanSupplier function) {
 		RayTracingCacheChunk chunk = this.getChunk(x, y, z);
 		if (chunk == null) {
-			return function.getAsInt();
+			return function.getAsBoolean();
 		}
 		return chunk.getOrSetCachedValue(x & 15, y & 15, z & 15, function);
 	}
@@ -46,6 +47,7 @@ public class RayTracingCache {
 		return this.chunks[(z * this.sizeChunks + y) * this.sizeChunks + x];
 	}
 
+	@Override
 	public void clearCache() {
 		for (RayTracingCacheChunk chunk : this.dirtyChunks) {
 			chunk.clearChunk();
@@ -64,24 +66,24 @@ public class RayTracingCache {
 		 * @param z chunk relative
 		 * @return the cached value
 		 */
-		public int getOrSetCachedValue(int x, int y, int z, IntSupplier function) {
+		public boolean getOrSetCachedValue(int x, int y, int z, BooleanSupplier function) {
 			int index = (z << 4) | y;
 			int offset = x << 1;
 			int cachedSection = this.cache[index];
 			int cachedValue = (cachedSection >>> offset) & 3;
 			if (cachedValue != 0) {
-				return cachedValue;
+				return cachedValue == 2;
 			}
-			cachedValue = function.getAsInt();
+			cachedValue = function.getAsBoolean() ? 2 : 1;
 			this.cache[index] = cachedSection | ((cachedValue & 3) << offset);
 			this.markDirty();
-			return cachedValue;
+			return cachedValue == 2;
 		}
 
 		private void markDirty() {
 			if (!this.dirty) {
 				this.dirty = true;
-				RayTracingCache.this.dirtyChunks.add(this);
+				RaytracingArrayCache.this.dirtyChunks.add(this);
 			}
 		}
 

@@ -1,6 +1,6 @@
 package meldexun.raytraceutil;
 
-public enum Axis {
+enum Axis {
 
 	X,
 	Y,
