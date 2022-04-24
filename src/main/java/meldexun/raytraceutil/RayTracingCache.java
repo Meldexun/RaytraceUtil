@@ -31,22 +31,6 @@ public class RayTracingCache {
 		return chunk.getOrSetCachedValue(x & 15, y & 15, z & 15, function);
 	}
 
-	public int getCachedValue(int x, int y, int z) {
-		RayTracingCacheChunk chunk = this.getChunk(x, y, z);
-		if (chunk == null) {
-			return -1;
-		}
-		return chunk.getCachedValue(x & 15, y & 15, z & 15);
-	}
-
-	public void setCachedValue(int x, int y, int z, int value) {
-		RayTracingCacheChunk chunk = this.getChunk(x, y, z);
-		if (chunk == null) {
-			return;
-		}
-		chunk.setCachedValue(x & 15, y & 15, z & 15, value);
-	}
-
 	private RayTracingCacheChunk getChunk(int x, int y, int z) {
 		x = (x >> 4) + this.radiusChunks;
 		if (x < 0 || x >= this.sizeChunks) {
@@ -93,31 +77,6 @@ public class RayTracingCache {
 			this.cache[index] = cachedSection | ((cachedValue & 3) << offset);
 			this.markDirty();
 			return cachedValue;
-		}
-
-		/**
-		 * @param x chunk relative
-		 * @param y chunk relative
-		 * @param z chunk relative
-		 * @return the cached value
-		 */
-		public int getCachedValue(int x, int y, int z) {
-			int index = (z << 4) | y;
-			int offset = x << 1;
-			return (this.cache[index] >>> offset) & 3;
-		}
-
-		/**
-		 * @param x     chunk relative
-		 * @param y     chunk relative
-		 * @param z     chunk relative
-		 * @param value the value which will be cache
-		 */
-		public void setCachedValue(int x, int y, int z, int value) {
-			int index = (z << 4) | y;
-			int offset = x << 1;
-			this.cache[index] = (this.cache[index] & ~(3 << offset)) | ((value & 3) << offset);
-			this.markDirty();
 		}
 
 		private void markDirty() {
