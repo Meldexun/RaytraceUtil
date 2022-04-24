@@ -26,7 +26,7 @@ public class RayTracingCache {
 	public int getOrSetCachedValue(int x, int y, int z, IntSupplier function) {
 		RayTracingCacheChunk chunk = this.getChunk(x, y, z);
 		if (chunk == null) {
-			return -1;
+			return function.getAsInt();
 		}
 		return chunk.getOrSetCachedValue(x & 15, y & 15, z & 15, function);
 	}
