@@ -19,6 +19,9 @@ public class RaytracingEngine {
 	}
 
 	public void setup(double x, double y, double z) {
+		camX = x;
+		camY = y;
+		camZ = z;
 		camBlockX = floor(x);
 		camBlockY = floor(y);
 		camBlockZ = floor(z);
